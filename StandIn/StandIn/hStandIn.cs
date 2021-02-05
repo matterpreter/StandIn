@@ -162,6 +162,10 @@ namespace StandIn
                               "StandIn.exe --group \"Dunwich Council\" --ntaccount \"REDHOOK\\WWhateley\"\n" +
                               "StandIn.exe --group DAgon --ntaccount \"REDHOOK\\RCarter\" --domain redhook --user RFludd --pass Cl4vi$Alchemi4e\n\n" +
 
+                              "# Remove user from group\n" +
+                              "StandIn.exe --group \"Dunwich Council\" --ntaccount \"REDHOOK\\WWhateley\" --remove\n" +
+                              "StandIn.exe --group DAgon --ntaccount \"REDHOOK\\RCarter\" --domain redhook --user RFludd --pass Cl4vi$Alchemi4e --remove\n\n" +
+
                               "# Create machine object\n" +
                               "StandIn.exe --computer Innsmouth --make\n" +
                               "StandIn.exe --computer Innsmouth --make --domain redhook --user RFludd --pass Cl4vi$Alchemi4e\n\n" +

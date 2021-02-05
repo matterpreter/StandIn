@@ -870,6 +870,52 @@ namespace StandIn
             }
         }
 
+        public static void removeUserFromGroup(String sGroup, String sAddUser, String sDomain = "", String sUser = "", String sPass = "")
+        {
+            try
+            {
+                PrincipalContext pc = null;
+                if (!String.IsNullOrEmpty(sDomain) && !String.IsNullOrEmpty(sUser) && !String.IsNullOrEmpty(sPass))
+                {
+                    String sUserDomain = String.Format("{0}\\{1}", sDomain, sUser);
+                    pc = new PrincipalContext(ContextType.Domain, sDomain, sUser, sPass);
+                }
+                else
+                {
+                    pc = new PrincipalContext(ContextType.Domain);
+                }
+
+                Console.WriteLine("\n[?] Using DC : " + pc.ConnectedServer);
+
+                GroupPrincipal oGroup = GroupPrincipal.FindByIdentity(pc, sGroup);
+                Console.WriteLine("[?] Group    : " + oGroup.Name);
+                Console.WriteLine("    GUID     : " + oGroup.Guid.ToString());
+                if (oGroup == null)
+                {
+                    Console.WriteLine("[!] Failed to resolve group..");
+                }
+                else
+                {
+                    Console.WriteLine("\n[+] Removing user from group");
+                    oGroup.Members.Remove(pc, IdentityType.SamAccountName, sAddUser);
+                    oGroup.Save();
+                    Console.WriteLine("    |_ Success");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("[!] Failed remove user from group..");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine("    |_ " + ex.InnerException.Message);
+                }
+                else
+                {
+                    Console.WriteLine("    |_ " + ex.Message);
+                }
+            }
+        }
+
         public static void getGroupMembership(String sGroup, String sDomain = "", String sUser = "", String sPass = "")
         {
             try
@@ -1663,7 +1709,11 @@ namespace StandIn
                         }
                         else if (!String.IsNullOrEmpty(ArgOptions.sGroup))
                         {
-                            if (!String.IsNullOrEmpty(ArgOptions.sNtaccount))
+                            if (!String.IsNullOrEmpty(ArgOptions.sNtaccount) && ArgOptions.bRemove)
+                            {
+                                removeUserFromGroup(ArgOptions.sGroup, ArgOptions.sNtaccount, ArgOptions.sDomain, ArgOptions.sUser, ArgOptions.sPass);
+                            }
+                            else if (!String.IsNullOrEmpty(ArgOptions.sNtaccount))
                             {
                                 addUserToGroup(ArgOptions.sGroup, ArgOptions.sNtaccount, ArgOptions.sDomain, ArgOptions.sUser, ArgOptions.sPass);
                             }
